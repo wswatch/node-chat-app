@@ -18,13 +18,12 @@ io.on('connection',function(socket){
     console.log('disconnect to the client.');
   });
 
-  socket.emit('newMessage', {
-    from: 'sb',
-    text: 'It is a new Message.',
-    createAt: new Date().getTime()
-  });
   socket.on('createMessage', function(data) {
-    console.log(data);
+    io.emit('newMessage', {
+      from: data.from,
+      text: data.text,
+      createAt: new Date().getTime()
+    })
   })
 });
 
