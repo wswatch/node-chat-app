@@ -3,6 +3,7 @@ const express = require('express');
 const socketIO = require('socket.io');
 const http = require('http');
 
+const {generateMessage} = require('./util/message');
 
 const port = process.env.PORT || 3000;
 const myPath = path.join(__dirname, "..", "public");
@@ -17,23 +18,11 @@ io.on('connection',function(socket){
   socket.on('disconnect', function(){
     console.log('disconnect to the client.');
   });
-  socket.emit('newMessage', {
-    from: 'Admin',
-    text: 'Welcome to the chat App',
-    createAt: new Date().getTime()
-  });
-  socket.broadcast.emit('newMessage', {
-    from: 'Admin',
-    text: 'New user join',
-    createAt: new Date().getTime()
-  });
+  socket.emit('newMessage', generateMessage('Admin', 'Welcome to chat app'));
+  socket.broadcast.emit('newMessage', generateMessage('Admin','New user join'));
 
   socket.on('createMessage', function(data) {
-    io.emit('newMessage', {
-      from: data.from,
-      text: data.text,
-      createAt: new Date().getTime()
-    })
+    io.emit('newMessage', generateMessage(data.from, data.text));
   })
 });
 
