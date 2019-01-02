@@ -6,9 +6,16 @@ socket.on('disconnect', function() {
   console.log('disconnect the server!');
 });
 socket.on('newMessage', function(data) {
-  var li = $("<li></li>");
-  li.text(`${data.from}: ${data.text}`);
-  $("#messages").append(li);
+
+  var time = moment(data.createdAt).format('h:mm a');
+
+  var template = $("#message-template").html();
+  var html = Mustache.render(template, {
+    from: data.from,
+    text: data.text,
+    createdAt: time
+  });
+  $("#messages").append(html);
 });
 
 $("#message-form").on("submit", function(e){
@@ -23,12 +30,16 @@ $("#message-form").on("submit", function(e){
 });
 
 socket.on("newLocationMessage", function(mes){
-  var li = $("<li></li>");
-  li.text(mes.from+": ");
-  var a = $('<a target="_blank">My current Position</a>');
-  a.attr("href", mes.url);
-  li.append(a);
-  $("#messages").append(li);
+
+  var time = moment(mes.createdAt).format('h:mm a');
+
+  var template = $("#locationMessage-template").html();
+  var html = Mustache.render(template, {
+    from: mes.from,
+    url: mes.url,
+    createdAt: time
+  });
+  $("#messages").append(html);
 });
 
 var locationButton = $("#send-location");
