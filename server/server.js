@@ -21,7 +21,6 @@ io.on('connection',function(socket){
   socket.on('Join', function(param, callback) {
     var name = validString(param.name);
     var room = validString(param.room);
-    //console.log(name, room);
     if (name === undefined || room === undefined) {
       callback("The input format is wrong!");
     } else {
@@ -31,7 +30,6 @@ io.on('connection',function(socket){
 
       socket.join(param.room);
       io.to(param.room).emit('updateUserList', users.getUserList(param.room));
-      //console.log();
 
       socket.emit('newMessage', generateMessage('Admin', 'Welcome to chat app'));
       socket.broadcast.to(param.room).emit('newMessage', generateMessage('Admin',`${param.name} has joined ${param.room}`));
@@ -39,7 +37,7 @@ io.on('connection',function(socket){
   })
 
   socket.on('disconnect', function(){
-    //console.log('disconnect to the client.');
+
     var user = users.removeUser(socket.id);
 
     if (user) {
@@ -50,11 +48,18 @@ io.on('connection',function(socket){
 
 
   socket.on('createMessage', function(data, callback) {
-    io.emit('newMessage', generateMessage(data.from, data.text));
+    var user = users.getUser(socket.id);
+    var txt = validString(data.text);
+    console.log(user, txt)
+    if (!user || txt === undefined) {
+      return;
+    }
+    io.to(user.room).emit('newMessage', generateMessage(user.name, txt));
     callback();
   })
   socket.on('createLocation', function(coords) {
-    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+    var user = users.getUser(socket.id);
+    io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
   })
 });
 

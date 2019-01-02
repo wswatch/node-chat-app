@@ -29,21 +29,21 @@ socket.on('connect', function(){
     }
   })
 });
-socket.on('disconnect', function() {
-  //console.log('disconnect the server!');
-});
+// socket.on('disconnect', function() {
+//   //console.log('disconnect the server!');
+// });
 socket.on('updateUserList', function(names) {
   var ol = $('<ol></ol>');
 
   names.forEach(function (name) {
-    ol.append(jQuery('<li></li>').text(name));
+    ol.append($('<li></li>').text(name));
   });
 
   $('#users').html(ol);
 })
 
 socket.on('newMessage', function(data) {
-
+  
   var time = moment(data.createdAt).format('h:mm a');
 
   var template = $("#message-template").html();
