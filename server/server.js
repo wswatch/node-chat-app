@@ -23,7 +23,7 @@ io.on('connection',function(socket){
 
   socket.on('createMessage', function(data, callback) {
     io.emit('newMessage', generateMessage(data.from, data.text));
-    callback('Hello from Server 1.1');
+    callback();
   })
   socket.on('createLocation', function(coords) {
     io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
